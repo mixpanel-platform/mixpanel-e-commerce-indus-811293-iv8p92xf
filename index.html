@@ -252,7 +252,7 @@
       function transformDataforEventsTable(data){
         var tableData = []
         _.each(data, function(values,key){
-          tableData[key] = [values['Events (Counts)'].split(" (")[0], values.Platform || 'non-standard library or server', parseFloat(values['Events (Counts)'].split("(")[1]) ]
+          tableData[key] = [values['Events (Counts)'].split(" (")[0], values.Platform || 'non-standard library or HTTP', parseFloat(values['Events (Counts)'].split("(")[1]) ]
         })
         return tableData
       }
@@ -264,7 +264,7 @@
           _.each(events, function(eventValues, eventKey){
             if(eventKey == 'Properties'){
               _.each(eventValues, function(propValues, propNames){
-                tableData[index] = [propNames, propValues, events['Events (Counts)'].split(" (")[0], events.Platform || 'non-standard library or server']
+                tableData[index] = [propNames, propValues, events['Events (Counts)'].split(" (")[0], events.Platform || 'non-standard library or HTTP']
                 index++
               })
             }
@@ -285,8 +285,6 @@
             if(eventKey == 'Properties'){
               _.each(eventValues, function(propValues, propNames){
                 doesNotContain(headersRow,propNames)
-                // tableData[index] = [propNames, propValues, events['Events (Counts)'].split(" (")[0], events.Platform || 'non-standard library or server']
-                // index++
               })
             }
           })
@@ -299,7 +297,7 @@
                 var headerIndex = _.indexOf(headersRow,propNames)
                 tableData[index] = tableData[index] || []
                 tableData[index][0] = tableData[index][0] ?  tableData[index][0] : events['Events (Counts)']
-                tableData[index][1] = tableData[index][1] ? tableData[index][1] : events['Platform'] || 'non-standard library or server'
+                tableData[index][1] = tableData[index][1] ? tableData[index][1] : events['Platform'] || 'non-standard library or HTTP'
                 tableData[index][headerIndex] = propValues
               })
             }
@@ -353,7 +351,7 @@
         'properties': {
           'token': 'ca9cd5c31c3325af1f911aaaf633ca44',
           'Report': 'Spec Sheet',
-          'client': 'Polaris Media',
+          'client': 'Internal',
           'distinct_id': id,
           'Project id': id,
           'Local Hour': new Date().getHours(),
