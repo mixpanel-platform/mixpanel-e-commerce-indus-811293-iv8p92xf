@@ -1,15 +1,370 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Events and Properties</title>
+    <!--mixpanel platform -->
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
-    <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+    <!-- mixpanel platform -->
+    <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script> <!--/mixpanel platform -->
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+
+    <!-- datatables css -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap4.min.css">
+
+    <!-- datables js requirements-->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap4.min.js"></script>
+
+    <!--font awesome icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+
+    <!--custom styles-->
+    <style media="screen">
+      .mp-button{
+        background-color:#5fabf1;
+        color:#fff;
+        padding: 6px 12px;
+        border: 1px solid #4d93d7;
+        text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+        text-transform: uppercase;
+        box-shadow: inset 0 1px 1px #77bdf4,0 2px 2px -1px rgba(0,0,0,0.2);
+        font-family: proxima-nova,sans-serif;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+      a.dt-button, .buttons-html5, div.dt-button, button.dt-button{
+        background-color:#5fabf1;
+        color:#fff;
+        padding: 6px 12px;
+        border: 1px solid #4d93d7;
+        text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+        text-transform: uppercase;
+        box-shadow: inset 0 1px 1px #77bdf4,0 2px 2px -1px rgba(0,0,0,0.2);
+        font-family: proxima-nova,sans-serif;
+        font-weight: bold;
+        border-radius: 4px;
+        background-image: none;
+      }
+    </style>
+
   </head>
-  <body class="mixpanel-platform-body">
-    <h1>Hello, World!</h1>
-    <script>
-      // Run queries and display results here
+  <body class="mixpanel-platform-body" style="background-color: white;">
+    <div class="container-fluid p-t-2">
+      <div class="row flex-items-sm-center">
+        <div class="col-sm-12">
+            <h1 class="text-xs-center">Project Events and Properties</h1>
+        </div>
+      </div>
+    </div>
+    <div class="row flex-items-sm-center">
+      <div class="col-sm-12">
+        <div class="pull-right clearfix"id="date-picker" style="margin-right: 15px; display: none;"></div>
+      </div>
+    </div>
+    <div class="container-fluid p-t-2" id="loading-container">
+      <div class="row">
+        <div class="col-sm-12 text-xs-center">
+          <i class="fa fa-spinner" aria-hidden="true" style="font-size:80px"></i>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid p-t-2" id='tables-and-charts'>
+      <div class="row" style="margin-top: 25px;">
+        <div class="col-sm-12"><!-- start of div for new user table -->
+          <table id='event-table' class="table table-striped text-center" cellspacing="0" width="100%">
+            <thead>
+              <tr id='table-header-row' style="background-color: white; display:none;">
+                <th>Event</th>
+                <th>Mixpanel Library</th>
+                <th>Event Count</th>
+              </tr>
+            <thead>
+          </table>
+        </div><!-- /end ofdiv for new user table -->
+      </div>
+      <div class="row" style="margin-top: 25px;" id='properties-table-container'>
+        <div class="col-sm-12"><!-- start of div products sold by day table -->
+          <table id='properties-table' class="table table-striped text-center" cellspacing="0" width="100%">
+            <thead>
+              <tr class="text-center" id='table-header-row' style="background-color: white; display:none;">
+                <th>Property Name</th>
+                <th>Percentage Collected</th>
+                <th>Event</th>
+                <th>Mixpanel Library</th>
+              </tr>
+            <thead>
+          </table>
+        </div><!-- end of div products sold by day tab-->
+      </div> <!-- /end  of div for products sold per month table -->
+    </div>
+    <div class="row" style="margin-top: 25px;">
+      <div class="col-sm-12">
+        <div class="center-block text-xs-center" >
+          <button type="button" id='export' class="mp-button button" name="Export CSV" onclick="exportAllData()" style="display:none;">Export Combined Data</button>
+        </div>
+      </div>
+    </div>
+    <!-- run spec query -->
+    <script type="text/javascript">
+      function runQuery(){
+        params.default_props = ['$last_name','$first_name','$email','$referring_domain','$city', '$region', 'mp_country_code', '$browser', '$browser_version', '$device', '$current_url', '$initial_referrer', '$initial_referring_domain', '$os', '$referrer', '$screen_height', '$screen_width', '$search_engine', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', '$city', '$region', '$app_release', '$app_version', '$carrier', '$ios_ifa', '$os_version', '$manufacturer', '$lib_version', '$model', '$os', '$screen_height', '$screen_width', '$wifi', '$city', '$region', 'mp_country_code', '$app_version', '$bluetooth_enabled', '$bluetooth_version', '$brand', '$carrier', '$has_nfc', '$has_telephone', '$lib_version', '$manufacturer', '$model', '$os', '$os_version', '$screen_dpi', '$screen_height', '$screen_width', '$wifi', '$google_play_services', '$import'];
+        params.default_events = ['$campaign_delivery', '$campaign_marked_spam', '$campaign_bounced', '$campaign_open', '$experiment_started'];
+
+        MP.api.jql(function main() {
+          return Events({
+            from_date: params.from_date || new Date(_.now() - (30 * 24 * 60 * 60 * 1000)).toISOString().slice(0, -14),
+            to_date: params.to_date || new Date().toISOString().slice(0, -14)
+          })
+          .filter(event => !_.contains(params.default_events, event.name))
+          .map(item => ({
+            event_name: item.name,
+            platform: item.properties.mp_lib,
+            properties: _.keys(_.omit(item.properties, params.default_props))
+          }))
+          .groupBy(['event_name','platform'], function(accums, items) {
+            var res = {};
+            _.each(accums, function(accum) {
+              res.properties = res.properties || {};
+              _.each(_.keys(accum.properties), function(prop) {
+                res.properties[prop] = res.properties[prop] + accum.properties[prop] || accum.properties[prop];
+              });
+              res.total = res.total + accum.total || accum.total;
+            });
+            _.each(items, function(item) {
+              res.properties = res.properties || {};
+              _.each(item.properties, function(prop) {
+                res.properties[prop] = res.properties[prop] + 1 || 1;
+              });
+              res.total = res.total + 1 || 1;
+            });
+            return res;
+          })
+          .map(function(result) {
+            var res = {};
+            res.event = result.key[0] + ' (' + result.value.total + ')';
+            res.platform = result.key[1]
+            res.properties = _.mapObject(result.value.properties, function(prop) {
+              return Math.round(prop * 1000 / result.value.total) / 10 + '%';
+            });
+            return res;
+          })
+          .map(function(results){
+            return {
+              "Events (Counts)": results.event,
+              "Platform": results.platform,
+              "Properties": results.properties
+            }
+          })
+        },params
+        ).done(function(results){
+          var tableTruthTest = $('#full-table-header-row').length
+          if(tableTruthTest > 0){
+            $('#full-table-container').remove()
+            $('<div class="row" style="margin-top: 25px; display: none;"> <div class="col-sm-12" id="full-table-container"> <table id="full-table" class="table text-center" cellspacing="0" width="100%"><thead id="full-table-table-header"><tr class="text-center" id="full-table-header-row" style="background-color: white;"></tr><thead></table></div></div></div>').insertAfter('#properties-table-container')
+            //$('<tr class="text-center" id="full-table-header-row" style="background-color: white;"></tr>').prependTo("#full-table-table-header")
+
+          }else{
+            //add the html headers
+            $('<div class="row" style="margin-top: 25px; display: none;"> <div class="col-sm-12" id="full-table-container"> <table id="full-table" class="table text-center" cellspacing="0" width="100%"><thead id="full-table-table-header"><tr class="text-center" id="full-table-header-row" style="background-color: white;"></tr><thead></table></div></div></div>').insertAfter('#properties-table-container')
+            //$('<tr class="text-center" id="full-table-header-row" style="background-color: white;"></tr>').prependTo("#full-table-table-header")
+          }
+          // transfrom results for graphing of events table
+          var eventTableData = transformDataforEventsTable(results)
+          var propertiesTableData = transformDataforPropertiesTable(results)
+          var properties = transformData(results)
+          //add the html headers
+          addHeaderRow(properties[1])
+          //hide loading icon
+          $("#loading-container").hide()
+          $('#tables-and-charts').show()
+          $('#properties-table-container').show()
+          //graph events table
+          $('#event-table').DataTable( {
+            data: eventTableData,
+            "destroy": true,
+            dom: 'Bfrtip',
+            lengthMenu: [
+              [ 10, 25, 50, -1 ],
+              [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+            ],
+            buttons: [
+                'csv', 'excel','pageLength'
+            ],
+            "columns": [
+              { className: "dt-left" },
+              { className: "dt-left" },
+              { className: "dt-left" }
+            ]
+          });
+          $('#properties-table').DataTable( {
+            data: propertiesTableData,
+            "destroy": true,
+            dom: 'Bfrtip',
+            lengthMenu: [
+              [ 10, 25, 50, -1 ],
+              [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+            ],
+            buttons: [
+                'csv', 'excel','pageLength'
+            ],
+            "columns": [
+              { className: "dt-left" },
+              { className: "dt-left" },
+              { className: "dt-left" },
+              { className: "dt-left" }
+            ]
+          });
+          $('#full-table').DataTable( {
+            data: properties[0],
+            "destroy": true,
+            dom: 'Bfrtip',
+            lengthMenu: [
+              [ -1, 10, 25, 50],
+              [ 'Show all','10 rows', '25 rows', '50 rows']
+            ],
+            buttons: [
+                'csv', 'excel','pageLength'
+            ]
+          });
+          $('#table-header-row, #export').show()
+          $('#date-picker').show()
+        })
+
+      }
+    </script>
+    <!-- helper functions -->
+    <script type="text/javascript">
+      //use when you need to get data formatted for use in a datatables table. should be able to just pass in results.values() as the param
+      function transformDataforEventsTable(data){
+        var tableData = []
+        _.each(data, function(values,key){
+          tableData[key] = [values['Events (Counts)'].split(" (")[0], values.Platform || 'non-standard library or server', parseFloat(values['Events (Counts)'].split("(")[1]) ]
+        })
+        return tableData
+      }
+
+      function transformDataforPropertiesTable(data){
+        var tableData = []
+        var index = 0
+        _.each(data, function(events){
+          _.each(events, function(eventValues, eventKey){
+            if(eventKey == 'Properties'){
+              _.each(eventValues, function(propValues, propNames){
+                tableData[index] = [propNames, propValues, events['Events (Counts)'].split(" (")[0], events.Platform || 'non-standard library or server']
+                index++
+              })
+            }
+          })
+
+        })
+        return tableData
+      }
+      //want to create a function that formatts the returned json so that it follows the formatt of the excel sheet you get when you export from jql
+      function transformData(data){
+        var tableData = []
+        //set the first two column values for the header row
+        var headersRow = ["Events (Counts)","Platform"]
+        var index = 0
+        //go through and get all of the properties that exist in the project so we can later create the header row of the table
+        _.each(data, function(events){
+          _.each(events, function(eventValues, eventKey){
+            if(eventKey == 'Properties'){
+              _.each(eventValues, function(propValues, propNames){
+                doesNotContain(headersRow,propNames)
+                // tableData[index] = [propNames, propValues, events['Events (Counts)'].split(" (")[0], events.Platform || 'non-standard library or server']
+                // index++
+              })
+            }
+          })
+        })
+        //after we have all the table header information go through all the evnets and assign % of the time we see the event occur per event per property
+        _.each(data, function(events){
+          _.each(events, function(eventValues, eventKey){
+            if(eventKey == 'Properties'){
+              _.each(eventValues, function(propValues, propNames){
+                var headerIndex = _.indexOf(headersRow,propNames)
+                tableData[index] = tableData[index] || []
+                tableData[index][0] = tableData[index][0] ?  tableData[index][0] : events['Events (Counts)']
+                tableData[index][1] = tableData[index][1] ? tableData[index][1] : events['Platform'] || 'non-standard library or server'
+                tableData[index][headerIndex] = propValues
+              })
+            }
+          })
+          index++
+        })
+        //add in values in case indexes are undefined
+        for (var x = 0; x < tableData.length; x++) {
+          for(var i= 0; i < headersRow.length; i++){
+            tableData[x][i] = tableData[x][i] || ''
+          }
+        }
+        return [tableData, headersRow]
+      }
+      //check to see if property value exits in header array
+      function doesNotContain(currentArray, valueToAdd){
+        if(!_.contains(currentArray, valueToAdd)){
+          currentArray.push(valueToAdd)
+        }
+      }
+      var dateSelector = $('#date-picker').MPDatepicker();    // Create a date picker
+      dateSelector.on('change', function(e, dates) {                          // Do something when the dates are changed
+          $("#loading-container").show()
+          $('#tables-and-charts').hide()
+          $('#properties-table-container').hide()
+          params.from_date = new Date(dates.from).toISOString().substr(0,10)
+          params.to_date = new Date(dates.to).toISOString().substr(0,10)
+          runQuery()
+
+      });
+      function addHeaderRow(array){
+        for(var i=0;i<array.length; i++){
+          $('#full-table-header-row').append('<th>'+array[i]+'</t>')
+        }
+      }
+    </script>
+    <script type="text/javascript">
+      var params ={}
+      runQuery()
+      function exportAllData() {
+        $("#full-table_wrapper .dt-buttons .buttons-csv").click()
+      }
+
+    </script>
+    <script type="text/javascript"> // mixpanel tracking
+      //info for tracking
+      var url = window.document.referrer.split('/mpplatform')[0]
+      var id = url.split('report/')[1]
+      var reportLoaded = {
+        'event': 'Report Loaded',
+        'properties': {
+          'token': 'ca9cd5c31c3325af1f911aaaf633ca44',
+          'Report': 'Spec Sheet',
+          'client': 'Polaris Media',
+          'distinct_id': id,
+          'Project id': id,
+          'Local Hour': new Date().getHours(),
+          'Day of the week': new Date().getDay()
+        }
+      }
+      var stringVersion = JSON.stringify(reportLoaded)
+      var encoded = window.btoa(stringVersion)
+      $.ajax({
+        url: "https://api.mixpanel.com/track/?data="+encoded
+      })
     </script>
   </body>
 </html>
